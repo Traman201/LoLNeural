@@ -65,6 +65,7 @@ colnames = ["time",
 p = "C:\\neural\\dataset.csv"
 Df = pd.read_csv(p,names=colnames)
 
+
 df = Df.drop("time", axis = 1)
 df = df.drop("death", axis = 1)
 df = df.drop("assist", axis = 1)
@@ -79,12 +80,12 @@ df = df.drop("health", axis = 1)
 df = df.drop("healthRegen", axis = 1)
 df = df.drop("magicPen", axis = 1)
 df = df.drop("magicPenPercent", axis = 1)
-df = df.drop("movementSpeed", axis = 1)
 df = df.drop("omnivamp", axis = 1)
 df = df.drop("physicalVamp", axis = 1)
 df = df.drop("power", axis = 1)
 df = df.drop("powerRegen", axis = 1)
 df = df.drop("spellVamp", axis = 1)
+
 print(df)
 normalized_df=(df-df.mean())/df.std()
 X = df.values[:, :]
@@ -123,7 +124,6 @@ Dfy = Dfy.drop("health", axis = 1)
 Dfy = Dfy.drop("healthRegen", axis = 1)
 Dfy = Dfy.drop("magicPen", axis = 1)
 Dfy = Dfy.drop("magicPenPercent", axis = 1)
-Dfy = Dfy.drop("movementSpeed", axis = 1)
 Dfy = Dfy.drop("omnivamp", axis = 1)
 Dfy = Dfy.drop("physicalVamp", axis = 1)
 Dfy = Dfy.drop("power", axis = 1)
