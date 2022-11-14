@@ -7,6 +7,11 @@ from matplotlib import pyplot as plt
 from tensorflow import keras
 import requests
 import json
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import SpectralClustering
+from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
+from sklearn.metrics.pairwise import pairwise_distances
 
 class NeuralNetwork:
     def Learn(self, filename):
@@ -17,17 +22,20 @@ class NeuralNetwork:
         abalone_labels = abalone_features.pop('y')
         self.abalone_test = test.copy()
         abalone_y_test = self.abalone_test.pop('y')
-        #print(self.abalone_test)
+        print(self.abalone_test)
         self.model = Sequential()
-        self.model.add(Dense(56, input_dim=10, activation='relu'))
-        self.model.add(Dense(56, activation='relu'))
+        self.model.trainable = True
+        self.model.add(Dense(70, input_dim=10, activation='relu'))
+        self.model.add(Dense(70, activation='relu'))
         self.model.add(Dense(1, activation='relu'))
-        self.model.compile(optimizer='adam', loss='mae') 
-        self.losses = self.model.fit(abalone_features, abalone_labels, epochs=30, )
-       # V = self.model.predict(self.abalone_test).round()
+        self.model.compile(optimizer='adam', loss='mae' , metrics=['accuracy']) 
+        self.losses = self.model.fit(abalone_features, abalone_labels, epochs=20, )
+        V = self.model.predict(self.abalone_test).round()
+        print(V)
     def SaveModel(self , path): self.model.save(path)
-    def LoadModel(self , path): self.model = keras.models.load_model(path)
-    def NeuralWork(self , data): return self.model.predict(data)
+    def LoadModel(self , path): 
+        self.model = keras.models.load_model(path)
+    def NeuralWork(self , data): return self.model.predict(data , batch_size = 1).round()
     def ShowNeuralData(self):
         fig = plt.figure()
         ax = fig.add_subplot()
@@ -43,39 +51,42 @@ class NeuralNetwork:
 
 
 
-get_param = {'index':'10'}
-post_param = {'winChance':'34'}
+Df = pd.read_csv("D:\\GIT_RPS\LoLNeural\\data\\YDataset.csv")
+Df = Df.drop("y", axis = 1)
+x = Df.values
+DFD = pd.DataFrame(x)
+print(DFD)
+
 def get_request():
-    get_response = requests.get(url="http://25.66.210.56:8080/local/status" , params=get_param)
-    post_response = requests.post(url="http://25.66.210.56:8080/local/status" , data=post_param)
-    print(post_response)
+    get_param = {'index':'10'}
+    get_response = requests.get(url="http://25.47.99.103:8080/local/status" , params=get_param)
+    print(get_response)
     return get_response.content
-  #  print(post_response.content)
+def post_request(data):
+    post_param = {'winChance':data}
+    post_response = requests.post(url="http://25.47.99.103:8080/local/status" , data=post_param)
 
 NN = NeuralNetwork()
-#NN.Learn("D:\\GIT_RPS\LoLNeural\\data\\N_YDataset.csv")
+NN.Learn("D:\\GIT_RPS\LoLNeural\\data\\N_YDataset.csv")
+#NN.LoadModel("D:\\GIT_RPS\LoLNeural\\model")
 #NN.SaveModel("D:\\GIT_RPS\LoLNeural\\model")
-NN.LoadModel("D:\\GIT_RPS\LoLNeural\\model")
 
 
-dd = {'kill': 100.0, 'abilityPower': 5.0, 'armor': 13.149999999999999, 'attackDamage': -22.740000000000002, 'attackSpeed': -0.19700000000000006, 'healthMax': 27.0, 'lifesteal': 0.0, 'magicResist': 2.1999999999999957, 'movementSpeed': -5.0, 'powerMax': -379.0}
 
+dd = {'kill': 0.6842105263157894, 'abilityPower': 0.56565402962591, 'armor': 0.5770452740270056, 'attackDamage': 0.5154098360655738, 'attackSpeed': 0.7226289800783245, 'healthMax': 0.6219512195121952, 'lifesteal': 0.5788216560509554, 'magicResist': 0.5779100037188546, 'movementSpeed': 0.5779100037188546, 'powerMax': 0.5678027280671758}
+min_max_scaler = preprocessing.MinMaxScaler()
 while(True):
     DATA = []
     data = json.loads(get_request())
-    d1 = dict(list(data.items())[:len(data)-3])
+    d1 = dict(list(data.items())[:len(data)-4])
     for key, value in dd.items(): DATA.append(value)
     df=pd.DataFrame(DATA )
-    #df.head()
-    #df.transpose()
-    normalized_df=(df-df.mean())/df.std()
-    #print(df[0].to_numpy())
-    #print(d1.to_numpy())
-    #test_input = np.random.random((1, 10))
-    #print(test_input)
-    print(np.transpose(normalized_df))
-    #print(np.transpose(normalized_df))
-    print(NN.NeuralWork(np.transpose(normalized_df)))
+    x_scaled = min_max_scaler.fit_transform(DFD.values)
+    normalized_df=(np.transpose(df)-np.transpose(DFD.mean()))/np.transpose(DFD.std())
+    print(np.transpose(df))
+    #accuary = str(NN.NeuralWork(df)[0])
+    print(NN.NeuralWork(np.transpose(df)))
+   # post_request(accuary)
 
 
 
