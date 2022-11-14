@@ -6,6 +6,7 @@ from keras.layers.core import Dense
 from matplotlib import pyplot as plt
 from tensorflow import keras
 import requests
+import json
 
 class NeuralNetwork:
     def Learn(self, filename):
@@ -45,6 +46,7 @@ class NeuralNetwork:
     #def __init__(self, filename):
 
 
+
 get_param = {'index':'10'}
 post_param = {'winChance':'34'}
 def get_request():
@@ -54,8 +56,16 @@ def get_request():
     return get_response.content
   #  print(post_response.content)
 
+NN = NeuralNetwork()
+
 while(True):
-    print(get_request())
+    DATA = []
+    data = json.loads(get_request())
+    d1 = dict(list(data.items())[:len(data)-3])
+    for key, value in d1.items(): DATA.append(value)
+    df=pd.DataFrame(DATA)
+    normalized_df=(df-df.mean())/df.std()
+    print(NN.NeuralWork(normalized_df))
 
 """
 NN = NeuralNetwork()
@@ -63,7 +73,6 @@ NN.Learn("D:\\GIT_RPS\LoLNeural\\data\\N_YDataset.csv")
 NN.ShowNeuralData()
 NN.SaveModel("D:\\GIT_RPS\LoLNeural\\model")
 """
-
 """
 filename = "C:\\neural\\N_YDataset.csv"
 df = pd.read_csv(filename)
