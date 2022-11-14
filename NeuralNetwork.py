@@ -18,7 +18,7 @@ class NeuralNetwork:
         abalone_test = test.copy()
         abalone_y_test = abalone_test.pop('y')
         self.model = Sequential()
-        self.model.add(Dense(56, input_dim=28, activation='relu'))
+        self.model.add(Dense(56, input_dim=9, activation='relu'))
         self.model.add(Dense(56, activation='relu'))
         self.model.add(Dense(1, activation='relu'))
         self.model.compile(optimizer='adam', loss='mae') 
@@ -29,7 +29,7 @@ class NeuralNetwork:
 
     def LoadModel(self , path): self.model = keras.models.load_model(path)
 
-    def NeuralWork(self , data): return self.model.fit_predict(data)
+    def NeuralWork(self , data): return self.model.predict(data)
     def Normaliation(self): 
         return 0
     def ShowNeuralData(self):
@@ -57,6 +57,7 @@ def get_request():
   #  print(post_response.content)
 
 NN = NeuralNetwork()
+NN.LoadModel("D:\\GIT_RPS\LoLNeural\\model")
 
 while(True):
     DATA = []
@@ -65,7 +66,13 @@ while(True):
     for key, value in d1.items(): DATA.append(value)
     df=pd.DataFrame(DATA)
     normalized_df=(df-df.mean())/df.std()
-    print(NN.NeuralWork(normalized_df))
+    #print(df[0].to_numpy())
+    print(d1)
+    #print(NN.NeuralWork(normalized_df.to_numpy()))
+
+
+
+
 
 """
 NN = NeuralNetwork()
@@ -73,6 +80,7 @@ NN.Learn("D:\\GIT_RPS\LoLNeural\\data\\N_YDataset.csv")
 NN.ShowNeuralData()
 NN.SaveModel("D:\\GIT_RPS\LoLNeural\\model")
 """
+
 """
 filename = "C:\\neural\\N_YDataset.csv"
 df = pd.read_csv(filename)
