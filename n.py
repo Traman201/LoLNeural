@@ -149,6 +149,6 @@ for index, row in vecdist.iterrows(): Dists.append(distvec(row , kMeans.cluster_
 maxlenvec = find_max_vec(Dists ,labels ,kMeans.cluster_centers_)
 print(maxlenvec)
 '''
-Dfy.to_csv("YDataset.csv", encoding='utf-8', index=False)
-normalized_dfy.to_csv("N_YDataset.csv", encoding='utf-8', index=False)
+#Dfy.to_csv("YDataset.csv", encoding='utf-8', index=False)
+#normalized_dfy.to_csv("N_YDataset.csv", encoding='utf-8', index=False)
 #plt.show()

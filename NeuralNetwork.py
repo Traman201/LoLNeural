@@ -7,6 +7,8 @@ from matplotlib import pyplot as plt
 from tensorflow import keras
 import requests
 import json
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 class NeuralNetwork:
     def Learn(self, filename):
@@ -49,6 +51,7 @@ def post_request(_url , data):
     post_param = {'winChance':data}
     post_response = requests.post(url=_url , data=post_param)
 def start_request(url):
+    mmscaler = MinMaxScaler()
     while(True):
         DATA = []
         data = json.loads(get_request(url))
@@ -56,10 +59,15 @@ def start_request(url):
         for key, value in d1.items(): DATA.append(value)
         df=pd.DataFrame(DATA )
         normalized_df=(np.transpose(df)-DFD.mean().to_numpy())/DFD.std().to_numpy()
-        accuary = str(NN.NeuralWork(df)[0])
+       # print(normalized_df)
+        #
+        X_train_norm = mmscaler.fit_transform(DFD)
+        normalized_df = mmscaler.transform(np.transpose(df))
+        accuary = str(NN.NeuralWork(normalized_df)[0])
         if(accuary == '0'):  accuary = 'draw'
         if(accuary == '1'):  accuary = 'lose'
         if(accuary == '2'):  accuary = 'win'
+        print(accuary)
         post_request(url , accuary)
 
 
@@ -69,8 +77,11 @@ Df = Df.drop("y", axis = 1)
 x = Df.values
 DFD = pd.DataFrame(x)
 NN = NeuralNetwork()
-#N.Learn("D:\\GIT_RPS\LoLNeural\\data\\N_YDataset.csv")
+#NN.Learn("D:\\GIT_RPS\LoLNeural\\data\\N_YDataset.csv")
 NN.LoadModel("D:\\GIT_RPS\LoLNeural\\model")
 #NN.SaveModel("D:\\GIT_RPS\LoLNeural\\model")
-#dd = {'kill': 13, 'abilityPower': 178, 'armor': 193, 'attackDamage': 104, 'attackSpeed': 79, 'healthMax': 2126, 'lifesteal': 31, 'magicResist': 115, 'movementSpeed': 41, 'powerMax':1688}
+dd = {'kill': 13, 'abilityPower': 178, 'armor': 193, 'attackDamage': 104, 'attackSpeed': 79, 'healthMax': 2126, 'lifesteal': 31, 'magicResist': 115, 'movementSpeed': 41, 'powerMax':1688}
+
+
 start_request("http://25.47.99.103:8080/local/status")
+
