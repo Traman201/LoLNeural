@@ -64,9 +64,9 @@ def start_request(url):
         X_train_norm = mmscaler.fit_transform(DFD)
         normalized_df = mmscaler.transform(np.transpose(df))
         accuary = str(NN.NeuralWork(normalized_df)[0])
-        if(accuary == '0'):  accuary = 'draw'
-        if(accuary == '1'):  accuary = 'lose'
-        if(accuary == '2'):  accuary = 'win'
+        if(accuary == '[0.]'):  accuary = 'Поражение'
+        if(accuary == '[1.]'):  accuary = 'Ничья'
+        if(accuary == '[2.]'):  accuary = 'Победа'
         print(accuary)
         post_request(url , accuary)
 
@@ -83,5 +83,6 @@ NN.LoadModel("D:\\GIT_RPS\LoLNeural\\model")
 dd = {'kill': 13, 'abilityPower': 178, 'armor': 193, 'attackDamage': 104, 'attackSpeed': 79, 'healthMax': 2126, 'lifesteal': 31, 'magicResist': 115, 'movementSpeed': 41, 'powerMax':1688}
 
 
-start_request("http://25.47.99.103:8080/local/status")
+#"http://25.47.99.103:8080/local/status"
+start_request("http://25.66.210.56:8080/local/status")
 
