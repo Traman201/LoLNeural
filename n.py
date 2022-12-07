@@ -10,7 +10,7 @@ from sklearn import preprocessing
 from sklearn.metrics.pairwise import pairwise_distances
 
 
-'''
+
 def distvec(vec_x , vec_y):
  dist = 0
  for i in range(0 , len(vec_x)-1):
@@ -23,12 +23,36 @@ def find_max_vec(vecdata , ydata , center):
         for i in range(0 , len(ydata)):
                 if(max_vec_len[int(ydata[i])] < vecdata[i]): max_vec_len[int(ydata[i])] = vecdata[i]
         return max_vec_len
+
+
+def calc_percent(point , center , maxpointlen):
+        maxpercent  = 10
+        PointDist = []
+        for pointcenter in center:
+                PointDist.append(distvec(point , pointcenter))
+        # вычисление в кластере победа 
+        if(point['y'] == 0):
+                return 100
+        # вычисление в кластере ничьи       
+        if(point['y'] == 1):
+                percent = maxpercent * (maxpointlen *PointDist[1] / 100 )
+                if(distvec(center[0] ,center[1] ) > distvec(center[0] ,center[2])):return 50 + percent
+                else: return 50 - percent
+        # вычисление в кластере поражение 
+        if(point['y'] == 2):
+                return 0
+
+
+
+
+
+'''
         
 def find_procent(max_vec_len ,ydata, vecdata , center):
         procent = []
         for i in range(0 , len(ydata)):
-
 '''
+
 
 
 fig = plt.figure(figsize=(15, 8))
@@ -142,13 +166,20 @@ normalized_dfy['y'] = pd.Series(labels, index=normalized_dfy.index)
 Dfy['y'] = pd.Series(labels, index=Dfy.index)
 
 #print(normalized_dfy.sort_values(['y'], ascending=[False])['y'])
-'''
+
 Dists = []
+PercentResult = []
 vecdist = normalized_dfy
-for index, row in vecdist.iterrows(): Dists.append(distvec(row , kMeans.cluster_centers_[int(row['y'])]))
+for index, row in vecdist.iterrows(): 
+        PercentResult.append()
+
+        
+        
+        Dists.append(distvec(row , kMeans.cluster_centers_[int(row['y'])]))
+
 maxlenvec = find_max_vec(Dists ,labels ,kMeans.cluster_centers_)
-print(maxlenvec)
-'''
-Dfy.to_csv("YDataset.csv", encoding='utf-8', index=False)
-normalized_dfy.to_csv("N_YDataset.csv", encoding='utf-8', index=False)
+print(len(kMeans.cluster_centers_))
+
+#Dfy.to_csv("YDataset.csv", encoding='utf-8', index=False)
+#normalized_dfy.to_csv("N_YDataset.csv", encoding='utf-8', index=False)
 #plt.show()
